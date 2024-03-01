@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Music_Club.Models.Users>
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="container_log" style="display: flex; align-items: center; justify-content: center;width:800px;height:auto;position:absolute;left:30%;top:20%;">
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="UsersConfirm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group" style="width:800px;">
+                    @foreach(var item in Model)
+                    {
+                        if (item.IsСonfirm)
+                        {
+                            <div style="display:flex;width:100%;margin-top:15px;">
+                            <div style="color:azure;width:400px;font-size:20px">@item.FirstName  @item.LastName, nick - @item.Login </div>
+                            <h5 style="margin-left:50px;color:azure;">Активирован</h5>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="display:flex;width:100%;margin-top:15px;">
+                                <div style="color:azure;width:350px;font-size:20px">
+                                    @item.FirstName  @item.LastName, nick - @item.Login
+                                </div>
+                                <div id="edit_genre" class="form-group" style="margin-left:100px;">
+
+                                    <input type="submit" asp-action="UsersConfirm" asp-route-id="@item.Id" value="Добавить пользователя" class="btn btn-primary " style="border:none; background-color:#00ff00;color:black;" />
+                                </div>
+                            </div>
+
+                        }
+
+                    }
+                    </div>
+            </form>
+
+
+        </div>
+    </div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,463 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Admin</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+    <link href="lib/bootstrap/dist/css/bootstrap-grid.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Salsa&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/webApiStyle.css" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow" style="margin-bottom:0">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="MusicClips" asp-action="Index" style="font-size:24px;font-weight:bold;color:#00ff00">MusicClub</a>
+
+            <span class="navbar-brand" style="color:#00ff00"> Администратор</span>
+            <!--<a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="LogOut" style="color:#00ff00">Главная</a>-->
+
+            <select style="width:auto;" name="lang" class="form-control">
+                <option value="ru">Русский - рус</option>
+                <option value="en">English - eng</option>
+                <option value="uk">Українська - укр</option>
+
+            </select>
+
+        </div>
+    </nav>
+    <div id="index_body">
+        <div id="index_left" style="width: 15%; height: 100vh; padding-top: 60px;">
+            <a id="openViewGanre" style="text-decoration: none; cursor: pointer">
+                <div id="add_genre" style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+                    <img src="/image/add-genre.png" />
+                    <h5 style="color:azure;margin-left:8px">Добавить жанр</h5>
+                </div>
+            </a>
+            <a id="openViewUsers" style="text-decoration: none; cursor: pointer">
+                <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+                    <img src="/image/users.png" />
+                    <h5 style="color:azure;margin-left:8px">Пользователи</h5>
+                </div>
+            </a>
+            <a id="btnAddClip" style="text-decoration: none; cursor: pointer">
+                <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+                    <img src="/image/addvideo.png" />
+                    <h5 style="color:azure;margin-left:8px">Добавить клип</h5>
+                </div>
+            </a>
+            <a id="del_clip_a" style="text-decoration: none;cursor:pointer">
+                <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+                    <img src="/image/remove.png" />
+                    <h5 style="color:azure;margin-left:8px">Удалить клип</h5>
+                </div>
+            </a>
+        </div>
+        <div style="border-right: 2px solid white; height:100vh;"></div>
+        <section id="GenresBody" style="margin-top: 50px; margin-left: 50px; font-size: 22px; color: azure; ">
+            <div>
+                <label>Название жанра</label>
+                <input type="text" id="genre_name" style="border-radius:8px;" />
+                <input type="submit" id="btnAddGanre" value="Добавить" style="background: #282528; color: lime; border-radius: 8px; padding:0 5px 0 5px;" />
+                <input type="submit" id="btnDelGanre" class="active" value="Удалить" style="background: #282528; color: lime; border-radius: 8px; padding: 0 5px 0 5px; " />
+            </div>
+            <div>
+                <ul id="listGenres">
+                </ul>
+            </div>
+        </section>
+
+        <section id="UsersBody" style="margin-top: 50px; margin-left: 50px; font-size: 22px; color: azure;">
+            <ul id="listUsers">
+            </ul>
+        </section>
+
+        <section id="ClipsBody" style="margin-top: 50px; margin-left: 50px; font-size: 22px; color: azure;">
+            <div style="display: flex; width:1200px;height:auto;position:absolute;left:30%;top:20%;">
+                <div class="row" style="width:60%">
+                    <div class="col-md-4" style="width:60%;">
+                        <form id="formSong" asp-action="Create" asp-controller="MusicClips" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label class="control-label" style="color:#00ff00">Название</label>
+                                <input id="titleClip" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" style="color:#00ff00">Описание</label>
+                                <input id="descriptionClip" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" style="color:#00ff00">Дата выхода</label>
+                                <input id="releaseDate" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" style="color:#00ff00">Исполнитель</label>
+                                <input id="artistClip" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="display:none">
+                                <label class="control-label" style="color:#00ff00"></label>
+                                <input class="form-control" id="inpt_crt_gnr" />
+                                <span  class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="display:none">
+                                <label  class="control-label"></label>
+                                <input  id="userId" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <input type="file" name="uploadedFile" id="videoClip" style="color:black" />
+                            <div class="form-group" style="display: flex;margin-top:20px;">
+                                <input type="submit" value="Добавить" class="addClipBtn btn btn-primary" style="border:none; background-color:#00ff00;color:black;margin-top:10px" />
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div style="color:azure;margin-left:-100px;margin-top:15px; width:300px;">
+
+                    <h5>Выбирете жанр:</h5>
+
+                    <div>
+                        <ul id="listGenresForSong">
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="ClipsDelBody" style="margin-top: 50px; margin-left: 50px; font-size: 22px; color: azure; height: 100vh; overflow-y: auto; ">
+            <ul id="ListSongs" style="list-style-type: none; ">
+            </ul>
+        </section>
+
+    </div>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            let pageIsActiveSong = false;
+            function hideAll() {
+                GenresBody.classList.add("active");
+                UsersBody.classList.add("active");
+                ClipsBody.classList.add("active");
+                ClipsDelBody.classList.add("active");
+            }
+
+            //#region Genres
+
+            let selectedGenre = 0;
+            let listActiveGenre = [];
+            function createListGenres(genre) {
+                return "<li> <a class='editGenre' data-genreid='" + genre.id + "'> " +
+                    " <div id='" + genre.id + "' class='myhover'> <h3>" + genre.genre_name + "</h3></div>" +
+                    " </a> </li>";
+            }
+            function getListGenres() {
+                return $.ajax({
+                    url: "https://localhost:7083/api/ganres",
+                    method: 'GET',
+                    contentType: "application/json",
+                    success: function (genres) {
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            }
+            function checkGenre(selectG) {
+                for (let i = 0; i < listActiveGenre.length; i++) {
+                    if (listActiveGenre[i] === selectG) {
+                        document.getElementById(selectedGenre).classList.remove("myback");
+                        listActiveGenre.splice(i, 1);
+                        return;
+                    }
+                }
+                listActiveGenre.push(selectG);
+                document.getElementById(selectedGenre).classList.add("myback");
+            }
+
+            $("#openViewGanre").click(async function (e) {
+                e.preventDefault();
+                hideAll();
+                console.log('work1')
+                let genres = await getListGenres();
+                console.log('work2')
+
+                GenresBody.classList.remove("active");
+                console.log();
+                let listStr = "";
+                $.each(genres, function (index, genre) {
+                    listStr += createListGenres(genre);
+                });
+                listGenres.innerHTML = "";
+                listGenres.insertAdjacentHTML('beforeend', listStr);
+                btnAddGanre.value = "Добавить";
+                genre_name.value = "";
+                btnDelGanre.classList.add("active");
+
+            });
+
+            $("#btnAddGanre").click(function (e) {
+                e.preventDefault();
+                if (selectedGenre === 0) {
+                    $.ajax({
+                        contentType: "application/json",
+                        url: "https://localhost:7083/api/ganres",
+                        method: 'POST',
+                        data: JSON.stringify({
+                            genre_name: genre_name.value
+                        }),
+                        success: function (genres) {
+                            openViewGanre.click();
+                        },
+                        error: function (x, y, z) {
+                            console.log(x);
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        contentType: "application/json",
+                        url: "https://localhost:7083/api/ganres",
+                        method: 'PUT',
+                        data: JSON.stringify({
+                            id: selectedGenre,
+                            genre_name: genre_name.value
+                        }),
+                        success: function (genres) {
+                            selectedGenre = 0;
+                            genre_name.value = "";
+                            openViewGanre.click();
+                        },
+                        error: function (x, y, z) {
+                            console.log(x);
+                        }
+                    });
+                }
+            });
+
+            $("#btnDelGanre").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    contentType: "application/json",
+                    url: "https://localhost:7083/api/ganres/" + selectedGenre,
+                    method: 'DELETE',
+                    success: function (genre) {
+                        openViewGanre.click();
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            });
+
+            $("body").on("click", ".editGenre", function (e) {
+                e.preventDefault();
+                selectedGenre = $(this).data("genreid");
+                if (pageIsActiveSong === true) {
+
+                    console.log(listActiveGenre);
+                    checkGenre(selectedGenre);
+                }
+                else {
+                    selectedGenre = $(this).data("genreid");
+                    $.ajax({
+                        contentType: "application/json",
+                        url: "https://localhost:7083/api/ganres/" + selectedGenre,
+                        method: 'GET',
+                        success: function (genre) {
+                            genre_name.value = genre.genre_name;
+                            btnAddGanre.value = "Сохранить";
+                            btnDelGanre.classList.remove("active");
+                        },
+                        error: function (x, y, z) {
+                            console.log(x);
+                        }
+                    });
+                }
+
+            });
+
+            //#endregion
+
+            //#region Users
+            let selectedUser = 0;
+            function createListUsers(user) {
+                if (user.isСonfirm === false) {
+                    return "<li> <div class='myhover'> <h3 style='color: red'>" + user.login + "</h3> " +
+                        " <a data-userid='" + user.id + "' class='authorized' >Авторизовать</a> </div> </li>";
+                }
+                else {
+                    return "<li> <div class='myhover'> <h3 >" + user.login + "</h3> </div> </li>";
+                }
+            }
+
+            $("#openViewUsers").click(function (e) {
+                e.preventDefault();
+                hideAll();
+                $.ajax({
+                    contentType: "application/json",
+                    url: "https://localhost:7083/api/account",
+                    method: 'GET',
+                    success: function (users) {
+                        console.log(users);
+                        UsersBody.classList.remove("active");
+                        let listStr = "";
+                        $.each(users, function (index, user) {
+                            listStr += createListUsers(user);
+                        });
+                        listUsers.innerHTML = "";
+                        listUsers.insertAdjacentHTML('beforeend', listStr);
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            });
+
+            $("body").on("click", ".authorized", function (e) {
+                selectedUser = $(this).data("userid")
+                $.ajax({
+                    contentType: "application/json",
+                    url: "https://localhost:7083/api/account",
+                    method: 'PUT',
+                    data: JSON.stringify({
+                        id: selectedUser
+                    }),
+                    success: function (user) {
+                        selectedUser = 0;
+                        openViewUsers.click();
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            });
+
+
+            //#endregion
+
+            //#region Clips
+            function createListSongs(song) {
+
+
+                return "<li > <a class='DelSong' data-songid='" + song.id + "'>" +
+                    "<div class='myhover'  style='display:flex;margin-top:5px;border-radius: 8px;border: 1px solid #B5B8B1;'><div class='top_clip'> <video id='vid' autoplay muted loop> <source src='\\video\\" + song.path_Video + "' type='video/mp4''></video></div>  " +
+                    " <div style='margin:20px 0 0 45px; color: azure;'><div style='display:flex;'>Название:   <h3 style='margin-left:30px' >   " + song.title + "</h3></div>" +
+                    "<div style='display:flex;'>Исполнитель:<h3 style='margin-left:30px'>  " + song.artist + "</h3> </div></div></div> </a > </li > "
+            }
+
+            $("#btnAddClip").click(async function (e) {
+                e.preventDefault();
+                hideAll();
+                pageIsActiveSong = true;
+                ClipsBody.classList.remove("active");
+                let genres = await getListGenres();
+                let listStr = "";
+                $.each(genres, function (index, genre) {
+                    listStr += createListGenres(genre);
+                });
+                listGenresForSong.innerHTML = "";
+                listGenresForSong.insertAdjacentHTML('beforeend', listStr);
+            });
+
+            $(".addClipBtn").click(function (e) {
+                e.preventDefault();
+                let formData = new FormData();
+                formData.append("Title", titleClip.value);
+                formData.append("Description", descriptionClip.value);
+                formData.append("releaseDate", releaseDate.value);
+                formData.append("Artist", artistClip.value);
+                formData.append("Id_user", userId.value);
+                $.each(listActiveGenre, function (index, g) {
+                    formData.append("Genre", g);
+                });
+                var attachments = $('input[type=file]');
+                formData.append("attachment", attachments[0].files[0]);
+
+                $.ajax({
+                    contentType: false,
+                    processData: false,
+                    url: "https://localhost:7083/api/songs",
+                    method: 'POST',
+                    data: formData,
+                    success: function (genres) {
+                        formSong.reset();
+                        listActiveGenre = [];
+                        btnAddClip.click();
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            });
+
+            $("#del_clip_a").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    contentType: "application/json",
+                    url: "https://localhost:7083/api/songs",
+                    method: 'GET',
+                    success: function (songs) {
+                        hideAll();
+                        ClipsDelBody.classList.remove("active");
+                        let strStr = "";
+                        $.each(songs, function (index, song) {
+                            strStr += createListSongs(song);
+                        });
+                        ListSongs.innerHTML = "";
+                        ListSongs.insertAdjacentHTML("beforeend", strStr);
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            });
+
+            $("body").on("click", ".DelSong", function (e) {
+                e.preventDefault();
+                if (!confirm("Вы действительно желаете удалить этот клип?"))
+                    return;
+
+                console.log("work");
+                let songId = $(this).data("songid");
+
+                $.ajax({
+                    contentType: "application/json",
+                    url: "https://localhost:7083/api/songs/" + songId,
+                    method: 'DELETE',
+                    success: function (genre) {
+                        del_clip_a.click();
+                    },
+                    error: function (x, y, z) {
+                        console.log(x);
+                    }
+                });
+            })
+
+            //#endregion
+            hideAll();
+
+        });
+
+
+
+    </script>
+</body>
+</html>

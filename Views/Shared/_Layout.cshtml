@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Music_Club</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Music_Club.styles.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Salsa&display=swap" rel="stylesheet">
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+   
+</head>
+@{
+    Context.Request.Cookies.TryGetValue("FirstName", out string? firstName);
+    Context.Request.Cookies.TryGetValue("LastName", out string? lastName);
+    Context.Request.Cookies.TryGetValue("Login", out string? login);
+}
+           
+<body style="background-color:black/*  #004d47 */; padding-bottom: 0;">
+   
+    <header>
+       
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow" style="margin-bottom:0">
+            <div class="container-fluid" >
+                <a class="navbar-brand" asp-area="" asp-controller="MusicClips" asp-action="Index" asp-route-id="@firstName" style="font-size:24px;font-weight:bold;color:#00ff00">MusicClub</a>
+                @if (firstName == null)
+                {
+                    <div style="display: flex;width: 20%">
+                        <a class="nav-link " asp-area="" asp-controller="Account" asp-action="Login" style="font-size:18px;font-weight:bold;color:#00ff00">Войти</a>
+
+                        <a class="nav-link " asp-area="" asp-controller="Account" asp-action="Register" style="font-size:18px;font-weight:bold;color:#00ff00">Регистрация</a>
+                        <select style="width:auto;" name="lang" class="form-control">
+                            <option value="ru">Русский - рус</option>
+                            <option value="en">English - eng</option>
+                            <option value="uk">Українська - укр</option>
+
+                        </select>
+                    </div>
+                }
+                else
+                {
+                   
+                    <span class="navbar-brand" style="color:#00ff00"> @firstName  @lastName</span>
+                    <div style="display: flex;width: 15%">
+
+                    <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="LogOut" style="color:#00ff00">Выйти</a>
+                        @using (Html.BeginForm("ChangeCulture", "MusicClips"))
+                        {
+                           <select style="width:auto;" name="lang" class="form-control">
+                           <option value="ru">Русский - рус</option>
+                           <option value="en">English - eng</option>
+                           <option value="uk">Українська - укр</option>
+                           </select>
+                        }
+                   </div>
+                }
+                
+            </div>
+        </nav>
+        
+    </header>
+    <div style=" width: 100%; height:82vh; padding-bottom: 0;">
+        <main role="main" class="pb-3" >
+            @RenderBody()
+        </main>
+    </div>
+
+   
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    
+</body>
+</html>

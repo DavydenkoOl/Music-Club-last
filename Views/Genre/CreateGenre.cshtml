@@ -1,0 +1,58 @@
+﻿
+@model Music_Club.Models.GenreView
+@{
+    ViewBag.Title = "CreateGenre";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="container_log" style="display: flex; align-items: center; justify-content: center;width:800px;height:auto;position:absolute;left:30%;top:20%;">
+    <div class="row">
+        <div class="col-md-4" >
+            <form asp-action="CreateGenre">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group" style="width:300px">
+                    <label asp-for="Genre_name" class="control-label" style="color:#00ff00">Жанр</label>
+                    <input asp-for="Genre_name" class="form-control" id="input_genre" style="width:300px" />
+                    <span asp-validation-for="Genre_name" class="text-danger" ></span>
+                    <input type="hidden" name="original_name" id="original_name" />
+                </div>
+                <div id="add_genre" class="form-group" style="margin-top:20px">
+                    <input type="submit" asp-action="CreateGenre" value="Добавить" class="btn btn-primary " style="border:none; background-color:#00ff00;color:black;margin-top:10px" />
+                </div>
+                <div id="edit_genre" class="form-group" style="margin-top:-45px; display: none;">
+
+                    <input type="submit" asp-action="EditGenre" value="Изменить" class="btn btn-primary " style="border:none; background-color:#00ff00;color:black;margin-top:10px" />
+                </div>
+                <div id="del_genre" class="form-group" style="margin-top:-45px;margin-left:210px; display: none;">
+                    <input type="submit" asp-action="DeleteGenre"  value="Удалить" class="btn btn-danger" style="border:none; color:black;margin-top:10px" />
+                </div>
+            </form>
+            
+            
+        </div>
+    </div>
+
+    <div style="color:azure;margin-left:50px;margin-top:15px; width:300px;">
+        
+            <h5>Добавленные жанры:</h5>
+           
+        <div>
+            @foreach (var item in Model.GenreList)
+            {
+
+                <div class="existing_genre" style="margin-top:5px;cursor:pointer">
+                - @item.Genre_name
+                </div>
+            }
+        </div>
+       
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

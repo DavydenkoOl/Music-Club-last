@@ -1,0 +1,271 @@
+﻿@model IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Context.Request.Cookies.TryGetValue("Selected_video", out string? _clipPlay);
+    Context.Request.Cookies.TryGetValue("previous_video", out string? _clip_previous);
+    Context.Request.Cookies.TryGetValue("next_video", out string? _clip_next);
+    Context.Request.Cookies.TryGetValue("Login", out string? login);
+    int countRow = (int)Math.Ceiling(Model.musicClips!.Count() / (double)4);
+}
+
+<div id="notification" class="activeClass">
+    <div>
+        <button id="closeNotification"><img src="/image/close.png" /></button>
+    </div>
+    <h3 id="textForNotif"></h3>
+</div>
+
+<div id="index_body">
+    <div id="index_left" style="width: 15%; height:82vh; padding-top:60px;">
+
+        @if (login != null)
+        {
+            <div>
+                <img id="editImg" src="/image/edit-video.png"/>
+                <a asp-action="Index" id="openRedactor" asp-controller="WebApi">Редактор</a>
+            </div>
+        }
+
+        @*         @if (@login == "admin")
+        {
+        <a asp-action="CreateGenre" asp-controller="Genre" style="text-decoration: none;">
+        <div id="add_genre" style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/add-genre.png" />
+        <h5 style="color:azure;margin-left:8px">Добавить жанр</h5>
+        </div>
+        </a>
+        <a asp-action="Users" asp-controller="Account" style="text-decoration: none;">
+        <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/users.png" />
+        <h5 style="color:azure;margin-left:8px">Пользователи</h5>
+        </div>
+        </a>
+        <a asp-action="Create" asp-controller="MusicClips" style="text-decoration: none;">
+        <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/addvideo.png" />
+        <h5 style="color:azure;margin-left:8px">Добавить клип</h5>
+        </div>
+        </a>
+        <a id="del_clip_a" style="text-decoration: none;cursor:pointer">
+        <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/remove.png" />
+        <h5 style="color:azure;margin-left:8px">Удалить клип</h5>
+        </div>
+        </a>
+        }
+        else if (@login != null)
+        {
+        <a asp-action="Create" asp-controller="MusicClips" style="text-decoration: none;">
+        <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/addvideo.png" />
+        <h5 style="color:azure;margin-left:8px">Добавить клип</h5>
+        </div>
+        </a>
+        <a id="del_clip_a" style="text-decoration: none;cursor:pointer">
+        <div style="display:flex;width:70%; height:30px; margin:10px 0 20px 20px">
+        <img src="/image/remove.png" />
+        <h5 style="color:azure;margin-left:8px">Удалить клип</h5>
+        </div>
+        </a>
+        }
+        *@
+    </div>
+    <div id="inex_centre" style="width: 65%; height:82vh; border-left:1px solid #B5B8B1;border-right:1px solid #B5B8B1; position: relative;overflow:hidden">
+        <video autoplay muted loop id="video-background">
+            <source src="/video/video_von_muzportal.mp4" type="video/mp4">
+        </video>
+        <div id="wrapperBox">
+            <div id="search_clip">
+                <form style="display:flex" asp-action="Index">
+                    <input type="search" class="search-field" name="searchClip" value="@Model.filterViewModel!.SearchedData" placeholder="Поиск...">
+                    <input type="search" class="search-field" name="filterArtist" value="@Model.filterViewModel!.SelectedExecutor" placeholder="Фильтр по исполнителю...">
+                    <input type="search" class="search-field" name="filterGenre" value="@Model.filterViewModel!.SelectedGenres" placeholder="Фильтр по жанру...">
+                    <button type="submit">Поиск</button>
+                </form>
+
+                <div id="helpBtns">
+                    @if (Model.filterViewModel.SearchedData != null || Model.filterViewModel.SelectedGenres != null || Model.filterViewModel.SelectedExecutor != null)
+                    {
+                        <form asp-action="Index">
+                            <button id="resetForm">
+                                <div>
+                                    <img src="/image/clear-filter.png" />
+                                </div>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Index">
+                            <button id="resetForm">
+                                <div>
+                                    <img src="/image/filter.png" />
+                                </div>
+                            </button>
+                        </form>
+                    }
+
+                    @if (Model.sortViewModel!.current == SortState.TitleAsc)
+                    {
+                        <a asp-route-sortState="@SortState.TitleDesc"
+                           asp-route-searchClip="@Model.filterViewModel.SearchedData"
+                           asp-route-filterGenre="@Model.filterViewModel.SelectedGenres"
+                           asp-route-filterArtist="@Model.filterViewModel.SelectedExecutor">
+                            <div>
+                                <img src="/image/sort-az (1).png" />
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-route-sortState="@SortState.TitleAsc"
+                           asp-route-searchClip="@Model.filterViewModel.SearchedData"
+                           asp-route-filterGenre="@Model.filterViewModel.SelectedGenres"
+                           asp-route-filterArtist="@Model.filterViewModel.SelectedExecutor">
+                            <div>
+                                <img src="/image/sort-az.png" />
+                            </div>
+                        </a>
+                    }
+                </div>
+
+
+            </div>
+            @if (Model.activeClip == null)
+            {
+                <div id="allclips">
+                    @for (int i = 0; i < countRow; i++)
+                    {
+                        <div id="rowWrapper">
+                            @foreach (var item in Model.musicClips!.Skip(i * 4).Take(4))
+                            {
+                                if (item.Path_Video != null)
+                                {
+                                    <a asp-action="SelectedVideo" asp-controller="MusicClips" asp-route-id="@item.Id" class="clipsBody">
+                                        <div>
+                                            <h6>@item.Artist - @item.Title</h6>
+                                            <video id="videoTop" autoplay muted loop">
+                                                <source src="/video/@item.Path_Video" type="video/mp4">
+                                            </video>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+
+                <page-link page-model="Model.pageViewModel" page-action="Index"
+                           page-url-searchClip="@(Model.filterViewModel.SearchedData!)"
+                           page-url-filterGenre="@(Model.filterViewModel.SelectedGenres!)"
+                           page-url-filterArtist="@(Model.filterViewModel.SelectedExecutor!)"
+                           page-url-sortState="@(Model.sortViewModel!.current)"></page-link>
+
+            }
+        </div>
+
+        @if (Model.activeClip != null)
+        {
+            <div style="width: 60%; height:50vh; border:1px solid #004d47;position: absolute;top: 25%;left: 20%;border-radius:12px;box-shadow: 2px 2px 2px rgba(0,	77,	71, 0.5)">
+
+                <video id="video_player" style="width: 100%; height:100%; border-radius:12px;object-fit: cover;">
+                    <source src="/video/@Model.activeClip!.Path_Video" type="video/mp4">
+                </video>
+            </div>
+        }
+        <div class="blinking-border" id="delete_clip" style="position:absolute;width:auto;height:150px; border:2px solid white;left:25%;top:30%;border-radius:10px;display:none;background:black;">
+
+            @if (Model.activeClip != null)
+            {
+                <div style="background:black; color:lime;margin:15px;"><h5>!!! Действительно удалить клип - @Model.activeClip.Title ???</h5> </div>
+                <div id="div_btn_del" style="display: flex; justify-content:center;align-items:center;">
+
+                    <a asp-action="Delete" asp-controller="MusicClips" asp-route-id="@Model.activeClip.Id" style="text-decoration: none;color:darkred;margin-top:25px;font-size:22px;font-weight:bold;"><h3 style="font-weight:bold;">Удалить</h3></a>
+
+                    <a id="abolition" style="cursor:pointer;text-decoration: none;color:azure;margin-top:25px;font-size:22px;font-weight:bold;margin-left:25px;"><h3 style="font-weight:bold;">Отмена</h3></a>
+                </div>
+            }
+        </div>
+    </div>
+    <div id="index_right" style="width: 20%; height:82vh;overflow-y: scroll;">
+
+        @if (Model.activeClip != null)
+        {
+            @foreach (var item in Model.musicClips!)
+            {
+                if (item.Path_Video != null)
+                {
+                    <a asp-action="SelectedVideo" asp-controller="MusicClips" asp-route-id="@item.Id">
+                        <div class="top_clip" style="position: relative;width:98%; height:180px; border-radius:8px; border:1px solid #B5B8B1; margin:10px auto;  ">
+                            <h6 style="color:azure; position: absolute">@item.Artist - @item.Title</h6>
+                            <video id="videoTop" autoplay muted loop style="width:100%; height: 100%; object-fit: cover;border-radius:8px; z-index: -1000;position: absolute">
+                                <source src="/video/@item.Path_Video" type="video/mp4">
+                            </video>
+                        </div>
+                    </a>
+                }
+            }
+        }
+
+
+    </div>
+</div>
+<div id="div_footer">
+    <div style="width: 15%; height:12vh;display: flex; justify-content:center;align-items:center;font-size:16px;font-weight:bold;color:#00ff00">&copy; 2024 - Music_Club</div>
+    <div style="width: 65%; height:100%; border-left:1px solid #B5B8B1;border-right:1px solid #B5B8B1;">
+        <div id="time_passed" style="width:100%;height:8px;background-color:azure">
+            <div id="progress_bar" style="width:0;height:8px;background-color:#757272"> </div>
+        </div>
+        <div id="player" style="width:100%; height:92%;display:flex">
+            <div id="cild_con" style="width:10%;"></div>
+            <div id="cild_con" style="width:50%;display: flex; justify-content:center;align-items:center;">
+                <form>
+                    <button asp-action="SelectedVideo" asp-controller="MusicClips" asp-route-id="@_clip_previous" style="background: none;border: none;padding: 0;margin: 0;overflow: visible;font: inherit;line-height: normal;cursor: pointer;outline: none;">
+                        <img style="width:25px;height:25px;margin-right:25px" src="/image/previous-weis.png" />
+                    </button>
+                </form>
+                <div id="player_btn"><img id="playbtnImg" style="width:35px;height:35px;margin-right:25px" src="/image/play-weis.png" /></div>
+                <form>
+                    <button asp-action="SelectedVideo" asp-controller="MusicClips" asp-route-id="@_clip_next" style="background: none;border: none;padding: 0;margin: 0;overflow: visible;font: inherit;line-height: normal;cursor: pointer;outline: none;">
+                        <img style="width:20px;height:20px;" src="/image/next-weis.png" />
+                    </button>
+                </form>
+            </div>
+            <div id="cild_con" style="width:10%;display: flex; justify-content:center;align-items:center;">
+                <div>
+                    <img id="volum_sound" style="width:25px;height:25px;" src="/image/audio-volume-weis.png" />
+                </div>
+                <input type="range" value="50" id="volumeRange" style="">
+                <div>
+                    <img style="width:25px;height:25px;margin-right:5px; margin-left:30px" src="/image/download-weis.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(function () {
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/notification")
+            .build();
+
+        hubConnection.on("displayMessage", function (message) {
+            console.log(message);
+            $('#textForNotif').html(message);
+            $('#notification').removeClass("activeClass");
+        });
+
+        hubConnection.start()
+            .then()
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+
+    });
+</script>
